@@ -20,6 +20,9 @@ class AFD(AF):
         """Minimiza el autómata."""
         raise NotImplementedError
 
+    def accepted(self, word: str) -> bool:
+        raise NotImplementedError
+
     def _rename_state_in_transitions(self, old_name: Hashable, new_name: Hashable):
         """Renombra un estado dentro de las transiciones del autómata."""
         self.transitions[new_name] = self.transitions[old_name]

@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "pytest",
+      "setup": "cd tlengrep && sudo -H pip3 install -r requirements.txt",
+      "run": "cd tlengrep && pytest -k test_regex.py",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 10,
+      "points": null
+    }
+  ]
+}

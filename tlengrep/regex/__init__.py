@@ -87,7 +87,10 @@ class Char(RegEx):
         return word == self.char
 
     def to_afnd(self) -> AFND:
-        raise NotImplementedError
+        return AFND().add_state('q0') \
+                     .mark_initial_state('q0') \
+                     .add_state('q1', final = True) \
+                     .add_transition('q0', 'q1', self.char)
 
     def _atomic(self):
         return True

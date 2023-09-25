@@ -33,11 +33,15 @@ class AF(ABC):
         if final:
             self.final_states.add(state)
 
+        return self
+
     def mark_initial_state(self, state: Hashable):
         """Marca un estado del autómata como inicial."""
         if state not in self.states:
             raise ValueError(f"El estado {state} no pertenece al autómata.")
         self.initial_state = state
+
+        return self
 
     def normalize_states(self):
         """
@@ -108,6 +112,8 @@ class AF(ABC):
                 self.final_states.remove(old_name)
                 self.final_states.add(new_name)
             self._rename_state_in_transitions(old_name, new_name)
+
+        return self
 
     @abstractmethod
     def _rename_state_in_transitions(self, old_name: Hashable, new_name: Hashable):

@@ -27,6 +27,8 @@ class AFND(AF):
         if char is not SpecialSymbol.Lambda:
             self.alphabet.add(char)
 
+        return self
+
     def determinize(self) -> AFD:
         """Determiniza el autómata."""
         raise NotImplementedError
@@ -40,6 +42,8 @@ class AFND(AF):
                 if old_name in self.transitions[state][char]:
                     self.transitions[state][char].remove(old_name)
                     self.transitions[state][char].add(new_name)
+
+        return self
 
     def _get_extended_alphabet(self) -> list[str]:
         """Obtiene el alfabeto extendido del autómata (incluyendo símbolos especiales)."""

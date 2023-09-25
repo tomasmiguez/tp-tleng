@@ -16,6 +16,8 @@ class AFD(AF):
         self.transitions[state1][char] = state2
         self.alphabet.add(char)
 
+        return self
+
     def minimize(self):
         """Minimiza el autómata."""
         raise NotImplementedError
@@ -31,6 +33,8 @@ class AFD(AF):
             for char in self.transitions[state]:
                 if self.transitions[state][char] == old_name:
                     self.transitions[state][char] = new_name
+
+        return self
 
     def _get_extended_alphabet(self) -> list[str]:
         """Obtiene el alfabeto extendido del autómata (incluyendo símbolos especiales)."""

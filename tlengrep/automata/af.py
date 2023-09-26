@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from tabulate import tabulate
-from typing import Hashable
+from typing import Hashable, List, Dict
 
 
 __all__ = ["AF"]
@@ -92,7 +92,8 @@ class AF(ABC):
         table = []
         for state in self.transitions:
             row = [
-                f"{state}{'*' if state in self.final_states else ('^' if state == self.initial_state else '')}"]
+                f"{state}{'*' if state in self.final_states else ('^' if state == self.initial_state else '')}"
+            ]
             row.extend(self._transitions_to_str(state).values())
             table.append(row)
         return tabulate(table, header, tablefmt="fancy_grid")
@@ -121,11 +122,11 @@ class AF(ABC):
         pass
 
     @abstractmethod
-    def _get_extended_alphabet(self) -> list[str]:
+    def _get_extended_alphabet(self) -> List[str]:
         """Obtiene el alfabeto extendido del autómata (incluyendo símbolos especiales)."""
         pass
 
     @abstractmethod
-    def _transitions_to_str(self, state: Hashable) -> dict[Hashable, str]:
+    def _transitions_to_str(self, state: Hashable) -> Dict[Hashable, str]:
         """Devuelve las transiciones de un estado para cada símbolo como string."""
         pass

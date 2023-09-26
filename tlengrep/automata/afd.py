@@ -1,4 +1,4 @@
-from typing import Hashable
+from typing import Hashable, List, Dict
 from automata.af import AF
 
 __all__ = ["AFD"]
@@ -36,11 +36,11 @@ class AFD(AF):
 
         return self
 
-    def _get_extended_alphabet(self) -> list[str]:
+    def _get_extended_alphabet(self) -> List[str]:
         """Obtiene el alfabeto extendido del autómata (incluyendo símbolos especiales)."""
         return list(self.alphabet)
 
-    def _transitions_to_str(self, state: Hashable) -> dict[Hashable, str]:
+    def _transitions_to_str(self, state: Hashable) -> Dict[Hashable, str]:
         """Devuelve las transiciones de un estado para cada símbolo como string."""
         transitions = {}
         for char in self._get_extended_alphabet():

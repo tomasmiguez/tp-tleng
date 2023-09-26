@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Hashable, Union
+from typing import Hashable, Union, List, Dict
 
 from automata.af import AF
 from automata.afd import AFD
@@ -15,7 +15,9 @@ class SpecialSymbol(Enum):
 class AFND(AF):
     """Autómata finito no determinístico (con transiciones lambda)."""
 
-    def add_transition(self, state1: Hashable, state2: Hashable, char: Union[str, SpecialSymbol]):
+    def add_transition(
+        self, state1: Hashable, state2: Hashable, char: Union[str, SpecialSymbol]
+    ):
         """Agrega una transición al autómata."""
         if state1 not in self.states:
             raise ValueError(f"El estado {state1} no pertenece al autómata.")
@@ -45,11 +47,11 @@ class AFND(AF):
 
         return self
 
-    def _get_extended_alphabet(self) -> list[str]:
+    def _get_extended_alphabet(self) -> List[str]:
         """Obtiene el alfabeto extendido del autómata (incluyendo símbolos especiales)."""
         return list(self.alphabet) + [SpecialSymbol.Lambda]
 
-    def _transitions_to_str(self, state: Hashable) -> dict[Hashable, str]:
+    def _transitions_to_str(self, state: Hashable) -> Dict[Hashable, str]:
         """Devuelve las transiciones de un estado para cada símbolo como string."""
         transitions = {}
         for char in self._get_extended_alphabet():

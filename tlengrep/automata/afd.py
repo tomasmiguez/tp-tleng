@@ -23,7 +23,18 @@ class AFD(AF):
         raise NotImplementedError
 
     def accepts(self, word: str) -> bool:
-        raise NotImplementedError
+        """Determina si una cadena es aceptada por el automata. (En tiempo lineal, duuuh.)"""
+        current_state = self.initial_state
+        for letter in word:
+            if not letter in self.transitions[current_state]:
+                return False
+
+            current_state = self.transitions[current_state][letter]
+
+        if current_state in self.final_states:
+            return True
+
+        return False
 
     def _rename_state_in_transitions(self, old_name: Hashable, new_name: Hashable):
         """Renombra un estado dentro de las transiciones del autómata."""

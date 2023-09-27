@@ -51,7 +51,10 @@ class Empty(RegEx):
         return False
 
     def to_afnd(self) -> AFND:
-        raise NotImplementedError
+        # No es minimal pero no es necesario ya que tenemos minimize.
+        # Es el minimal que no complejiza determinize.
+        return AFND().add_state('q0') \
+                     .mark_initial_state('q0')
 
     def _atomic(self):
         return True
@@ -67,7 +70,8 @@ class Lambda(RegEx):
         return word == ""
 
     def to_afnd(self) -> AFND:
-        raise NotImplementedError
+        return AFND().add_state('q0', final = True) \
+                     .mark_initial_state('q0')
 
     def _atomic(self):
         return True
@@ -113,7 +117,7 @@ class Concat(RegEx):
         return False
 
     def to_afnd(self) -> AFND:
-        raise NotImplementedError
+        return self.exp1.to_afnd().concat(self.exp2.to_afnd())
 
     def _atomic(self):
         return False
@@ -134,7 +138,7 @@ class Union(RegEx):
         return self.exp1.naive_match(word) or self.exp2.naive_match(word)
 
     def to_afnd(self) -> AFND:
-        raise NotImplementedError
+        return self.exp1.to_afnd().union(self.exp2.to_afnd())
 
     def _atomic(self):
         return False
@@ -159,7 +163,7 @@ class Star(RegEx):
         return False
 
     def to_afnd(self) -> AFND:
-        raise NotImplementedError
+        return self.exp.to_afnd().kleene_closure()
 
     def _atomic(self):
         return False
@@ -183,7 +187,7 @@ class Plus(RegEx):
         return False
 
     def to_afnd(self) -> AFND:
-        raise NotImplementedError
+        return self.exp.to_afnd().positive_closure()
 
     def _atomic(self) -> bool:
         return False

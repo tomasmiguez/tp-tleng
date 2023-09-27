@@ -43,18 +43,19 @@ class AF(ABC):
 
         return self
 
-    def normalize_states(self):
+    def normalize_states(self, prefix: str = "q"):
         """
         Normaliza los nombres de los estados según la convención q0, q1, q2, ...
+        por defecto, se puede pasar un parametro adicional para manejar el prefijo.
 
         Modifica el autómata (no crea una copia) y devuelve el autómata modificado.
         """
         new_names = {}
         if self.initial_state is not None:
-            new_names[self.initial_state] = "q0"
+            new_names[self.initial_state] = f"{prefix}{0}"
         for i, state in enumerate(self.states - {self.initial_state}):
             if state not in new_names:
-                new_names[state] = f"q{i + 1}"
+                new_names[state] = f"{prefix}{i + 1}"
 
         # Ordenamos los estados para hacer el renombre sin pisar ninguno
         ordered_new_names = []

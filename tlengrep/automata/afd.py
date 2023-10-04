@@ -27,16 +27,19 @@ class AFD(AF):
         q_of_classes = 0
         while True:
             prior_q_of_classes = q_of_classes
-            q_of_classes = len({v['=eq'] for _, v in classes.items()})
             rows = {}
+            # Agrego las clases de equivalencia de cada estado
             for state in self.states:
                 transitions = sorted(self._transitions_to_str(state).items())
-                rows[state] = ''
+                rows[state] = classes[state]['=eq']
                 for char, to_state in transitions:
                     rows[state] += classes[to_state]['=eq']
                     classes[state][char] = classes[to_state]['=eq']
-            if q_of_classes <= prior_q_of_classes:
+            # Verifico si dejé de agregar clases de equivalencia
+            q_of_classes = len({v['=eq'] for _, v in classes.items()})
+            if prior_q_of_classes == q_of_classes:
                 break
+            # Actualizo las nuevas clases de equivalencia
             for state in self.states:
                 classes[state]['=eq'] = rows[state]
 
@@ -44,18 +47,19 @@ class AFD(AF):
         initial_state = self.initial_state
         self._reset_transitions()
 
-        new_states = {}
+        new_states = set()
+        # Agrego los estados y transiciones del nuevo autómata en base a las clases de equivalencia
         for state, v in classes.items():
             if v['=eq'] not in new_states:
-                new_states[v['=eq']] = self.add_state(
-                    v['=eq'], v['=eq'] in final_states
-                )
+                self.add_state(v['=eq'], state in final_states)
+                new_states.add(v['=eq'])
             if state == initial_state:
                 self.mark_initial_state(v['=eq'])
+        # Agrego las transiciones del nuevo autómata en base a las clases de equivalencia
         for v in classes.values():
             for char in self.alphabet:
                 self.add_transition(v['=eq'], v[char], char)
-        self.normalize_states()
+        return self.normalize_states()
 
     def accepts(self, word: str) -> bool:
         """Determina si una cadena es aceptada por el automata. (En tiempo lineal, duuuh.)"""

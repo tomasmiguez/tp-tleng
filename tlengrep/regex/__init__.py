@@ -2,16 +2,7 @@ from abc import ABC, abstractmethod
 
 from automata import AFND
 
-__all__ = [
-    "RegEx",
-    "Empty",
-    "Lambda",
-    "Char",
-    "Union",
-    "Concat",
-    "Star",
-    "Plus"
-]
+__all__ = ["RegEx", "Empty", "Lambda", "Char", "Union", "Concat", "Star", "Plus"]
 
 
 class RegEx(ABC):
@@ -27,8 +18,7 @@ class RegEx(ABC):
 
     def match(self, word: str) -> bool:
         """Indica si la expresión regular acepta la cadena dada."""
-        # return self.to_afnd().determinize().minimize().accepted(word)
-        return self.to_afnd().determinize().accepts(word)
+        return self.to_afnd().determinize().minimize().accepts(word)
 
     @abstractmethod
     def to_afnd(self) -> AFND:
@@ -53,8 +43,7 @@ class Empty(RegEx):
     def to_afnd(self) -> AFND:
         # No es minimal pero no es necesario ya que tenemos minimize.
         # Es el minimal que no complejiza determinize.
-        return AFND().add_state('q0') \
-                     .mark_initial_state('q0')
+        return AFND().add_state('q0').mark_initial_state('q0')
 
     def _atomic(self):
         return True
@@ -70,8 +59,7 @@ class Lambda(RegEx):
         return word == ""
 
     def to_afnd(self) -> AFND:
-        return AFND().add_state('q0', final = True) \
-                     .mark_initial_state('q0')
+        return AFND().add_state('q0', final=True).mark_initial_state('q0')
 
     def _atomic(self):
         return True
@@ -91,10 +79,13 @@ class Char(RegEx):
         return word == self.char
 
     def to_afnd(self) -> AFND:
-        return AFND().add_state('q0') \
-                     .mark_initial_state('q0') \
-                     .add_state('q1', final = True) \
-                     .add_transition('q0', 'q1', self.char)
+        return (
+            AFND()
+            .add_state('q0')
+            .mark_initial_state('q0')
+            .add_state('q1', final=True)
+            .add_transition('q0', 'q1', self.char)
+        )
 
     def _atomic(self):
         return True
@@ -123,8 +114,10 @@ class Concat(RegEx):
         return False
 
     def __str__(self):
-        return f"{f'({self.exp1})' if not self.exp1._atomic() else self.exp1}" \
+        return (
+            f"{f'({self.exp1})' if not self.exp1._atomic() else self.exp1}"
             f"{f'({self.exp2})' if not self.exp2._atomic() else self.exp2}"
+        )
 
 
 class Union(RegEx):
@@ -144,8 +137,10 @@ class Union(RegEx):
         return False
 
     def __str__(self):
-        return f"{f'({self.exp1})' if not self.exp1._atomic() else self.exp1}" \
+        return (
+            f"{f'({self.exp1})' if not self.exp1._atomic() else self.exp1}"
             f"|{f'({self.exp2})' if not self.exp2._atomic() else self.exp2}"
+        )
 
 
 class Star(RegEx):

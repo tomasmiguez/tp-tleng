@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Hashable, Union, List, Dict
+from typing import FrozenSet, Hashable, Union, List, Dict, Set
 from collections import deque
 
 from automata.af import AF
@@ -35,7 +35,9 @@ class AFND(AF):
     def determinize(self) -> AFD:
         """Determiniza el autómata."""
         if not self.initial_state:
-            raise ValueError(f"Se requiere un estado inicial para determinizar al automata.")
+            raise ValueError(
+                f"Se requiere un estado inicial para determinizar al automata."
+            )
 
         # States of the new automata, they are sets of states of the current one
         new_initial = frozenset(self._l_closure(set([self.initial_state])))
@@ -49,12 +51,11 @@ class AFND(AF):
             for a in self.alphabet:
                 u = self._move(t, a)
 
-                if not u == set():
-                    if not u in new_states:
-                        new_states.add(frozenset(u))
-                        unvisited.add(frozenset(u))
+                if not u in new_states:
+                    new_states.add(frozenset(u))
+                    unvisited.add(frozenset(u))
 
-                    transitions.append((t, a, u))
+                transitions.append((t, a, u))
 
         final_states = set()
 
@@ -71,18 +72,18 @@ class AFND(AF):
         for s in nonfinal_states:
             afd.add_state(s)
         for s in final_states:
-            afd.add_state(s, final = True)
+            afd.add_state(s, final=True)
 
         afd.mark_initial_state(new_initial)
 
-        for (org, letter, dest) in transitions:
+        for org, letter, dest in transitions:
             afd.add_transition(org, dest, letter)
 
         afd.normalize_states()
 
         return afd
 
-    def _move(self, states: frozenset[Hashable], letter: str):
+    def _move(self, states: FrozenSet[Hashable], letter: str):
         res = set()
         for s in states:
             if letter in self.transitions[s]:
@@ -90,7 +91,7 @@ class AFND(AF):
 
         return self._l_closure(res)
 
-    def _l_closure(self, states: set[Hashable]) -> set[Hashable]:
+    def _l_closure(self, states: Set[Hashable]) -> Set[Hashable]:
         """Calcula la clausura lambda de un estado con BFS. (Se podria recursivamente con PD?)"""
         visited = set(states)
         q = deque(states)
@@ -108,7 +109,8 @@ class AFND(AF):
 
     def concat(self, other):
         """Dado otro AFND, devuelve un automata que reconoce el lenguaje
-           resultante de la concatenacion de los lenguajes reconocidos por self seguido de other."""
+        resultante de la concatenacion de los lenguajes reconocidos por self seguido de other.
+        """
 
         result = self._merge(other)
 
@@ -116,13 +118,15 @@ class AFND(AF):
         result.final_states = other.final_states
 
         for final_state in self.final_states:
-            result.add_transition(final_state, other.initial_state, SpecialSymbol.Lambda)
+            result.add_transition(
+                final_state, other.initial_state, SpecialSymbol.Lambda
+            )
 
         return result
 
     def union(self, other):
         """Dado otro AFND, devuelve un automata que reconoce el lenguahe resultante
-           de la union de los lenguajes reconocidos por ambos automatas."""
+        de la union de los lenguajes reconocidos por ambos automatas."""
         result = self._merge(other)
 
         # Esto es medio feito, porque implica conocimiento del funcionamiento de
@@ -144,7 +148,7 @@ class AFND(AF):
 
     def positive_closure(self):
         """Devuelve un nuevo AFND que reconoce al lenguaje resultante de aplicar
-           clausura positiva al lenguaje reconocido por self."""
+        clausura positiva al lenguaje reconocido por self."""
         for final_state in self.final_states:
             self.add_transition(final_state, self.initial_state, SpecialSymbol.Lambda)
 
@@ -152,7 +156,7 @@ class AFND(AF):
 
     def kleene_closure(self):
         """Devuelve un nuevo AFND que reconoce al lenguaje resultante de aplicar
-           clausura de Kleene al lenguaje reconocido por self."""
+        clausura de Kleene al lenguaje reconocido por self."""
         self.positive_closure()
 
         self.final_states.add(self.initial_state)
@@ -161,11 +165,10 @@ class AFND(AF):
 
     def _merge(self, other):
         """Dado otro AFND, devuelve un automate que contiene la union de ambos alfabetos,
-           estados, y transiciones; evitando colisiones de nombres. No tiene estado inicial
-           ni finales.
-           MUTA EL ESTADO DE LOS PARAMETROS!!! 🤮"""
-        self.normalize_states(prefix = "q")
-        other.normalize_states(prefix = "p")
+        estados, y transiciones; evitando colisiones de nombres. No tiene estado inicial
+        ni finales."""
+        self.normalize_states(prefix="q")
+        other.normalize_states(prefix="p")
 
         result = AFND()
         result.states = self.states.union(other.states)
@@ -173,7 +176,6 @@ class AFND(AF):
         result.transitions = {**self.transitions, **other.transitions}
 
         return result
-
 
     def _rename_state_in_transitions(self, old_name: Hashable, new_name: Hashable):
         """Renombra un estado dentro de las transiciones del autómata."""

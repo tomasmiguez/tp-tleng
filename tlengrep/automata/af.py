@@ -35,6 +35,12 @@ class AF(ABC):
 
         return self
 
+    def _reset_transitions(self):
+        self.states = set()
+        self.initial_state = None
+        self.final_states = set()
+        self.transitions = {}
+
     def mark_initial_state(self, state: Hashable):
         """Marca un estado del autómata como inicial."""
         if state not in self.states:

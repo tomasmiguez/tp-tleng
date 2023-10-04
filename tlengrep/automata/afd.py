@@ -20,7 +20,42 @@ class AFD(AF):
 
     def minimize(self):
         """Minimiza el autómata."""
-        raise NotImplementedError
+        classes = {
+            state: {'=eq': 'F' if state in self.final_states else 'N'}
+            for state in self.states
+        }
+        q_of_classes = 0
+        while True:
+            prior_q_of_classes = q_of_classes
+            q_of_classes = len({v['=eq'] for _, v in classes.items()})
+            rows = {}
+            for state in self.states:
+                transitions = sorted(self._transitions_to_str(state).items())
+                rows[state] = ''
+                for char, to_state in transitions:
+                    rows[state] += classes[to_state]['=eq']
+                    classes[state][char] = classes[to_state]['=eq']
+            if q_of_classes <= prior_q_of_classes:
+                break
+            for state in self.states:
+                classes[state]['=eq'] = rows[state]
+
+        final_states = self.final_states
+        initial_state = self.initial_state
+        self._reset_transitions()
+
+        new_states = {}
+        for state, v in classes.items():
+            if v['=eq'] not in new_states:
+                new_states[v['=eq']] = self.add_state(
+                    v['=eq'], v['=eq'] in final_states
+                )
+            if state == initial_state:
+                self.mark_initial_state(v['=eq'])
+        for v in classes.values():
+            for char in self.alphabet:
+                self.add_transition(v['=eq'], v[char], char)
+        self.normalize_states()
 
     def accepts(self, word: str) -> bool:
         """Determina si una cadena es aceptada por el automata. (En tiempo lineal, duuuh.)"""

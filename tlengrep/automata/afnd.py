@@ -106,6 +106,75 @@ class AFND(AF):
 
         return visited
 
+    def concat(self, other):
+        """Dado otro AFND, devuelve un automata que reconoce el lenguaje
+           resultante de la concatenacion de los lenguajes reconocidos por self seguido de other."""
+
+        result = self._merge(other)
+
+        result.mark_initial_state(self.initial_state)
+        result.final_states = other.final_states
+
+        for final_state in self.final_states:
+            result.add_transition(final_state, other.initial_state, SpecialSymbol.Lambda)
+
+        return result
+
+    def union(self, other):
+        """Dado otro AFND, devuelve un automata que reconoce el lenguahe resultante
+           de la union de los lenguajes reconocidos por ambos automatas."""
+        result = self._merge(other)
+
+        # Esto es medio feito, porque implica conocimiento del funcionamiento de
+        # `_merge`, ya que solo sabiendo que normaliza con prefijos p y q podemos
+        # garantizar que ini no genera colision, pero es mi metodo privado y hago lo
+        # que quiero (la posta seria abstraer eso de alguna forma, si fuera codigo de
+        # verdad lo haria).
+        result.add_state("ini")
+        result.mark_initial_state("ini")
+
+        # Tambien feardo, depende de que mute el estado de los parametros _merge, que ya
+        # de por si es bastante horrible.
+        result.add_transition("ini", self.initial_state, SpecialSymbol.Lambda)
+        result.add_transition("ini", other.initial_state, SpecialSymbol.Lambda)
+
+        result.final_states = self.final_states.union(other.final_states)
+
+        return result
+
+    def positive_closure(self):
+        """Devuelve un nuevo AFND que reconoce al lenguaje resultante de aplicar
+           clausura positiva al lenguaje reconocido por self."""
+        for final_state in self.final_states:
+            self.add_transition(final_state, self.initial_state, SpecialSymbol.Lambda)
+
+        return self
+
+    def kleene_closure(self):
+        """Devuelve un nuevo AFND que reconoce al lenguaje resultante de aplicar
+           clausura de Kleene al lenguaje reconocido por self."""
+        self.positive_closure()
+
+        self.final_states.add(self.initial_state)
+
+        return self
+
+    def _merge(self, other):
+        """Dado otro AFND, devuelve un automate que contiene la union de ambos alfabetos,
+           estados, y transiciones; evitando colisiones de nombres. No tiene estado inicial
+           ni finales.
+           MUTA EL ESTADO DE LOS PARAMETROS!!! 🤮"""
+        self.normalize_states(prefix = "q")
+        other.normalize_states(prefix = "p")
+
+        result = AFND()
+        result.states = self.states.union(other.states)
+        result.alphabet = self.alphabet.union(other.alphabet)
+        result.transitions = {**self.transitions, **other.transitions}
+
+        return result
+
+
     def _rename_state_in_transitions(self, old_name: Hashable, new_name: Hashable):
         """Renombra un estado dentro de las transiciones del autómata."""
         self.transitions[new_name] = self.transitions[old_name]

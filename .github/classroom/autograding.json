@@ -1,9 +1,19 @@
 {
   "tests": [
     {
-      "name": "pytest",
+      "name": "Entrega 1",
       "setup": "cd tlengrep && sudo -H pip3 install -r requirements.txt",
       "run": "cd tlengrep && pytest -k test_regex.py",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 10,
+      "points": null
+    },
+    {
+      "name": "Entrega 2",
+      "setup": "sudo -H pip3 install pytest",
+      "run": "cd tlengrep && pytest -k test_parser.py",
       "input": "",
       "output": "",
       "comparison": "exact",

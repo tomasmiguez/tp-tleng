@@ -1,33 +1,31 @@
 Uniones:
-U -> R|U
-U -> λ
+U -> C | U
+U -> C
 
 Concatenaciones:
-C -> AC
-C -> λ
+C -> VO C
+C -> ''
 
-Atomos (operadores unarios):
-A -> λ
-A -> V
-A -> V*
-A -> V+
-A -> V?
-A -> V{number}
-A -> V{number,number}
-A -> VA
+Valores con operadores unarios opcionales:
+VO -> V O
+
+Operadores unarios opcionales:
+O -> *
+O -> +
+O -> { n }
+O -> { n , n }
+O -> ''
 
 Valores (caracteres, clases especiales, clases o caracteres escapados):
-V -> [CL]
-V -> \d
-V -> \w
+V -> [ CL ]
 V -> char
 V -> number
-V -> scaped_char
+V -> escaped
 
 Clases de caracteres:
-CL -> CLACL
-CL -> λ
+CL -> CLA CL
+CL -> ''
 
 Atomo de clase de caracteres:
-CLA -> char-char
+CLA -> char - char
 CLA -> char

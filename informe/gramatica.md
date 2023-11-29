@@ -12,20 +12,11 @@ VO -> V O
 Operadores unarios opcionales:
 O -> *
 O -> +
-O -> { n }
-O -> { n , n }
+O -> rg1
+O -> rg2
 O -> ''
 
 Valores (caracteres, clases especiales, clases o caracteres escapados):
-V -> [ CL ]
-V -> char
-V -> number
-V -> escaped
-
-Clases de caracteres:
-CL -> CLA CL
-CL -> ''
-
-Atomo de clase de caracteres:
-CLA -> char - char
-CLA -> char
+V -> cls
+V -> ch
+V -> esc

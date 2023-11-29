@@ -18,3 +18,4 @@ Valores (caracteres, clases especiales, clases o caracteres escapados):
 V -> cls
 V -> ch
 V -> esc
+V -> ( U )

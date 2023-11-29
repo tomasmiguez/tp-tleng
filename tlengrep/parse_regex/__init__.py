@@ -2,6 +2,7 @@ import sys
 
 from regex import RegEx
 from .errors import SyntaxError
+from .lexer import lexer
 
 
 __all__ = ["parse_regex", "SyntaxError"]

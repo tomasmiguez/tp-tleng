@@ -14,19 +14,19 @@ class RegexRange:
 
         return self.min == other.min and self.max == other.max
 
-
 class RegexClassInterval:
     def __init__(self, fst: str, lst: str) -> None:
         self.fst = fst
         self.lst = lst
-        self.all_symbols = set([chr(i) for i in range(ord(fst), ord(lst) + 1)])
+
+    def all_symbols(self) -> set[str]:
+        return set([chr(i) for i in range(ord(self.fst), ord(self.lst) + 1)])
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, RegexClassInterval):
             return False
 
         return self.fst == other.fst and self.lst == other.lst
-
 
 tokens = (
     'CHAR',
@@ -47,7 +47,6 @@ def t_RANGE(t):
 
     return t
 
-
 t_CHAR = r'[^' + re.escape(literals) + r'\\' + r']'
 
 escaped = r'\\(.)'
@@ -65,6 +64,5 @@ def t_CLASS_INT(t):
 def t_ESCAPED(t):
     t.value = t.lexer.lexmatch.group(10)
     return t
-
 
 lexer = lex.lex()

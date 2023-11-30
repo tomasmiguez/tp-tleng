@@ -14,7 +14,17 @@ O -> V rg
 O -> V
 
 Valores (caracteres, clases especiales, clases o caracteres escapados):
-V -> cls
+V -> [ CL ]
 V -> ch
 V -> esc
 V -> ( U )
+
+Clases de caracteres:
+CL -> CLA CL
+CL -> ''
+
+CLA -> CE
+CLA -> cls_int
+
+CE -> ch
+CE -> esc

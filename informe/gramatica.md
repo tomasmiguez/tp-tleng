@@ -1,10 +1,14 @@
+Expresiones regulares:
+R -> U
+R -> ''
+
 Uniones:
 U -> C | U
 U -> C
 
 Concatenaciones:
 C -> O C
-C -> ''
+C -> O
 
 Valores con operadores unarios opcionales:
 O -> V *
@@ -17,7 +21,7 @@ Valores (caracteres, clases especiales, clases o caracteres escapados):
 V -> [ CS ]
 V -> cls_d
 V -> cls_w
-V -> ( U )
+V -> ( R )
 V -> CE
 V -> cls_int
 

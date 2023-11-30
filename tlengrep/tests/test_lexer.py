@@ -182,3 +182,16 @@ class TestRegexes:
         ]
 
         self._assert_expected(lexer, expected)
+
+class TestRegexClassInterval:
+    def test_letters(self):
+        interval = RegexClassInterval('a', 'c')
+        assert interval.all_symbols() == {'a', 'b', 'c'}
+
+    def test_numbers(self):
+        interval = RegexClassInterval('0', '2')
+        assert interval.all_symbols() == {'0', '1', '2'}
+
+    def test_inversed(self):
+        interval = RegexClassInterval('c', 'a')
+        assert interval.all_symbols() == set()

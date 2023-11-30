@@ -140,7 +140,7 @@ class TestRegexes:
 
         expected = [
             ('[', '['),
-            ('CLASS_INT', RegexClassInterval('a', 'z')),
+            ('CLS_INT', RegexClassInterval('a', 'z')),
             (']', ']'),
         ]
 
@@ -150,7 +150,7 @@ class TestRegexes:
         lexer.input(r'a-\z')
 
         expected = [
-            ('CLASS_INT', RegexClassInterval('a', 'z')),
+            ('CLS_INT', RegexClassInterval('a', 'z')),
         ]
 
         self._assert_expected(lexer, expected)
@@ -159,7 +159,7 @@ class TestRegexes:
         lexer.input(r'---')
 
         expected = [
-            ('CLASS_INT', RegexClassInterval('-', '-')),
+            ('CLS_INT', RegexClassInterval('-', '-')),
         ]
 
         self._assert_expected(lexer, expected)
@@ -168,7 +168,7 @@ class TestRegexes:
         lexer.input(r'a-\-')
 
         expected = [
-            ('CLASS_INT', RegexClassInterval('a', '-')),
+            ('CLS_INT', RegexClassInterval('a', '-')),
         ]
 
         self._assert_expected(lexer, expected)
@@ -177,8 +177,8 @@ class TestRegexes:
         lexer.input(r'\--@}-\P-')
 
         expected = [
-            ('CLASS_INT', RegexClassInterval('-', '@')),
-            ('CLASS_INT', RegexClassInterval('}', 'P')),
+            ('CLS_INT', RegexClassInterval('-', '@')),
+            ('CLS_INT', RegexClassInterval('}', 'P')),
             ('CHAR', '-'),
         ]
 
@@ -189,7 +189,7 @@ class TestRegexes:
 
         expected = [
             ('[', '['),
-            ('CLASS_INT', RegexClassInterval('a', 'z')),
+            ('CLS_INT', RegexClassInterval('a', 'z')),
             ('CHAR', '}'),
             ('RANGE', RegexRange(2, 3)),
             ('CHAR', '{'),
@@ -197,7 +197,7 @@ class TestRegexes:
             ('CHAR', 'a'),
             ('RANGE', RegexRange(234, 234)),
             ('CHAR', '}'),
-            ('CLASS_INT', RegexClassInterval('{', '}')),
+            ('CLS_INT', RegexClassInterval('{', '}')),
         ]
 
         self._assert_expected(lexer, expected)
@@ -206,12 +206,12 @@ class TestRegexes:
 class TestRegexClassInterval:
     def test_letters(self):
         interval = RegexClassInterval('a', 'c')
-        assert interval.all_symbols() == {'a', 'b', 'c'}
+        assert interval.all_symbols == {'a', 'b', 'c'}
 
     def test_numbers(self):
         interval = RegexClassInterval('0', '2')
-        assert interval.all_symbols() == {'0', '1', '2'}
+        assert interval.all_symbols == {'0', '1', '2'}
 
     def test_inversed(self):
         interval = RegexClassInterval('c', 'a')
-        assert interval.all_symbols() == set()
+        assert interval.all_symbols == set()

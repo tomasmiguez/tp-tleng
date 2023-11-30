@@ -193,7 +193,7 @@ class Plus(RegEx):
 class RegClass(RegEx):
     """Expresión regular que denota una clase de caracteres."""
 
-    def __init__(self, chars: set[str]):
+    def __init__(self, chars: set):
         self.chars = chars
 
     def naive_match(self, word: str):

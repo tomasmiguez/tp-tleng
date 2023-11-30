@@ -6,9 +6,14 @@ from regex import Char, Concat, Empty, Lambda, Plus, RegClass, Star, Union
 _class_digit_symbols = RegexClassInterval('0', '9').all_symbols
 
 _class_word_symbols = RegexClassInterval('a', 'z').all_symbols
-_class_word_symbols = _class_word_symbols.union(RegexClassInterval('A', 'Z').all_symbols)
-_class_word_symbols = _class_word_symbols.union(RegexClassInterval('0', '9').all_symbols)
+_class_word_symbols = _class_word_symbols.union(
+    RegexClassInterval('A', 'Z').all_symbols
+)
+_class_word_symbols = _class_word_symbols.union(
+    RegexClassInterval('0', '9').all_symbols
+)
 _class_word_symbols = _class_word_symbols.union({'_'})
+
 
 def p_regex_union(p):
     '''
@@ -92,17 +97,20 @@ def p_op_range(p):
         unions = Union(unions, concats)
     p[0] = unions
 
+
 def p_val_set(p):
     '''
     val : '[' set ']'
     '''
     p[0] = RegClass(p[2])
 
+
 def p_val_regex(p):
     '''
     val : '(' regex ')'
     '''
     p[0] = p[2]
+
 
 def p_val_esp(p):
     '''
@@ -128,7 +136,7 @@ def p_val_class_word(p):
 
 def p_val_int(p):
     '''
-    val : CLASS_INT
+    val : CLS_INT
     '''
     p[0] = Concat(Concat(Char(p[1].fst), Char('-')), Char(p[1].lst))
 
@@ -152,12 +160,12 @@ def p_atom_esp(p):
     atom : CHAR
          | ESCAPED
     '''
-    p[0] = { p[1] }
+    p[0] = {p[1]}
 
 
 def p_atom_int(p):
     '''
-    atom : CLASS_INT
+    atom : CLS_INT
     '''
     if ord(p[1].fst) > ord(p[1].lst):
         raise SyntaxError(f'Invalid range {p[1]}')

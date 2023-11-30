@@ -14,7 +14,7 @@ Valores con operadores unarios opcionales:
 O -> V *
 O -> V +
 O -> V ?
-O -> V rg
+O -> V range
 O -> V
 
 Valores (caracteres, clases especiales, clases o caracteres escapados):

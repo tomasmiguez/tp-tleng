@@ -35,7 +35,7 @@ tokens = (
     'CHAR',
     'ESCAPED',
     'RANGE',
-    'CLASS_INT',
+    'CLS_INT',
     'CLS_D',
     'CLS_W',
 )
@@ -62,7 +62,7 @@ class_int = r'(?P<fst>' + char_or_escape + r')-(?P<lst>' + char_or_escape + r')'
 
 
 @TOKEN(class_int)
-def t_CLASS_INT(t):
+def t_CLS_INT(t):
     fst = t.lexer.lexmatch.group('fst').lstrip('\\')
     lst = t.lexer.lexmatch.group('lst').lstrip('\\')
     t.value = RegexClassInterval(fst, lst)

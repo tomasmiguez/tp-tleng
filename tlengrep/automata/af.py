@@ -49,6 +49,38 @@ class AF(ABC):
 
         return self
 
+    def add_prefix(self, prefix: str):
+        """Agrega un prefijo a todos los estados del autómata."""
+        old_states = self.states.copy()
+
+        new_states = set()
+        for state in self.states:
+            new_state = f"{prefix}{state}"
+            new_states.add(new_state)
+
+        self.states = new_states
+
+        if self.initial_state is not None:
+            self.initial_state = f"{prefix}{self.initial_state}"
+
+        new_transitions = {}
+        for state in old_states:
+            new_transitions[f"{prefix}{state}"] = {}
+            for symbol, next_states in self.transitions[state].items():
+                new_transitions[f"{prefix}{state}"][symbol] = {
+                    f"{prefix}{next_state}" for next_state in next_states
+                }
+
+        self.transitions = new_transitions
+
+        new_final_states = set()
+        for state in self.final_states:
+            new_final_states.add(f"{prefix}{state}")
+
+        self.final_states = new_final_states
+
+        return self
+
     def normalize_states(self, prefix: str = "q"):
         """
         Normaliza los nombres de los estados según la convención q0, q1, q2, ...

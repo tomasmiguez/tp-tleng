@@ -1,5 +1,5 @@
 from lexer import tokens
-from errors import ParseError
+from .errors import SyntaxError
 from ply.yacc import yacc
 from regex import Char, Concat, Empty, Lambda, Plus, Star, Union
 
@@ -108,7 +108,7 @@ def p_atom_int(p):
     atom : CLASS_INT
     '''
     if ord(p[1].fst) > ord(p[1].lst):
-        raise ParseError(f'Invalid range {p[1]}')
+        raise SyntaxError(f'Invalid range {p[1]}')
     unions = Empty()
     for sym in p[1].all_symbols:
         unions = Union(unions, Char(sym))
@@ -125,9 +125,9 @@ def p_esp(p):
 
 def p_error(p):
     if p:
-        raise ParseError(f'Unexpected token {p.value!r} at position {p.lexpos}')
+        raise SyntaxError(f'Unexpected token {p.value!r} at position {p.lexpos}')
     else:
-        raise ParseError(f'Unexpected end of expression')
+        raise SyntaxError(f'Unexpected end of expression')
 
 
 parser = yacc()

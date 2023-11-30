@@ -4,7 +4,7 @@ from tlengrep.regex import Char, Concat, Empty, Lambda, Plus, Star, Union
 
 def p_union(p):
     '''
-    union : concat OR union
+    union : concat '|' union
     '''
     p[0] = Union(p[1], p[3])
 
@@ -28,9 +28,9 @@ def p_concat_lambda(p):
 
 def p_op(p):
     '''
-    op : val KLEEN
-       | val POSITIVE
-       | val OPTIONAL
+    op : val '*'
+       | val '+'
+       | val '?'
        | val
     '''
     if len(p) == 3:
@@ -57,7 +57,7 @@ def p_op_range(p):
 
 def p_val_paren(p):
     '''
-    val : L_P union R_L
+    val : '(' union ')'
     '''
     p[0] = p[2]
 

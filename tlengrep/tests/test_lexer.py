@@ -3,6 +3,7 @@ import re
 
 from parse_regex.lexer import lexer, RegexRange, RegexClassInterval
 
+
 class TestRegexes:
     def _assert_expected(self, lexer, expected):
         for idx, tok in enumerate(lexer):
@@ -200,6 +201,7 @@ class TestRegexes:
         ]
 
         self._assert_expected(lexer, expected)
+
 
 class TestRegexClassInterval:
     def test_letters(self):

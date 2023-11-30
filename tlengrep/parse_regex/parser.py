@@ -45,10 +45,10 @@ def p_op(p):
 
 def p_op_range(p):
     '''
-    p_op_range : val RANGE
+    op : val RANGE
     '''
     unions = Empty()
-    for n in range(p[2].min, p[2].max):
+    for n in range(p[2].min, p[2].max + 1):
         concats = Lambda()
         for _ in range(n):
             concats = Concat(concats, p[1])

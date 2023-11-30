@@ -68,14 +68,14 @@ def p_val_char(p):
     '''
     p[0] = Char(p[1])
 
-def p_val_class(p):
-    '''
-    val : CLASS
-    '''
-    unions = Empty()
-    for sym in p[1].all_symbols:
-        unions = Union(unions, Char(sym))
-    p[0] = unions
+# def p_val_class(p):
+#     '''
+#     val : CLASS
+#     '''
+#     unions = Empty()
+#     for sym in p[1].all_symbols:
+#         unions = Union(unions, Char(sym))
+#     p[0] = unions
 
 def p_error(p):
     if p:

@@ -14,11 +14,22 @@ class RegexRange:
 
         return self.min == other.min and self.max == other.max
 
+class RegexClassInterval:
+    def __init__(self, fst: str, lst: str) -> None:
+        self.fst = fst
+        self.lst = lst
+
+    def __eq__(self, other: Self) -> bool:
+        if not isinstance(other, RegexClassInterval):
+            return False
+
+        return self.fst == other.fst and self.lst == other.lst
+
 tokens = (
     'CHAR',
     'ESCAPED',
     'RANGE',
-    'CLASS',
+    'CLASS_INT',
 )
 
 literals = "|*+?()[]"
@@ -41,10 +52,11 @@ def t_RANGE(t):
 
 t_CHAR = r'[^' + re.escape(literals) + r'\\' + r']'
 
-# char_or_escape = r'(' + t_CHAR + r'|' + escaped + r')'
-# class_regex = r'\[(' + char_or_escape + r'|' + char_or_escape + r'-' + char_or_escape + r')\]'
-# @TOKEN(class_regex)
-# def t_CLASS(t):
-
+char_or_escape = r'(?:' + t_CHAR + r'|' + escaped + r')'
+class_int = r'(?P<fst>' + char_or_escape + r')-(?P<snd>' + char_or_escape + r')'
+@TOKEN(class_int)
+def t_CLASS_INT(t):
+    t.value = RegexClassInterval(t.lexer.lexmatch.group('fst'), t.lexer.lexmatch.group('snd'))
+    return t
 
 lexer = lex.lex()

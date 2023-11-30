@@ -1,7 +1,7 @@
 import pytest
 import re
 
-from parse_regex.lexer import lexer, RegexRange
+from parse_regex.lexer import lexer, RegexRange, RegexClassInterval
 
 class TestRegexes:
     def _assert_expected(self, lexer, expected):
@@ -111,6 +111,17 @@ class TestRegexes:
             ('CHAR', '}'),
             ('CHAR', '}'),
             ('CHAR', '{'),
+        ]
+
+        self._assert_expected(lexer, expected)
+
+    def test_class_int(self):
+        lexer.input(r'[a-z]')
+
+        expected = [
+            ('[', '['),
+            ('CLASS_INT', RegexClassInterval('a', 'z')),
+            (']', ']'),
         ]
 
         self._assert_expected(lexer, expected)

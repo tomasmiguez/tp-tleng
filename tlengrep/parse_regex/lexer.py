@@ -1,4 +1,5 @@
 import re
+from typing import Self
 import ply.lex as lex
 from ply.lex import TOKEN
 
@@ -7,6 +8,12 @@ class RegexRange:
         self.min = min
         self.max = max
 
+    def __eq__(self, other: Self) -> bool:
+        if not isinstance(other, RegexRange):
+            return False
+
+        return self.min == other.min and self.max == other.max
+
 tokens = (
     'CHAR',
     'ESCAPED',
@@ -14,7 +21,7 @@ tokens = (
     'CLASS',
 )
 
-literals = "|*+?()"
+literals = "|*+?()[]"
 
 escaped = r'\\(.)'
 @TOKEN(escaped)
@@ -32,10 +39,12 @@ def t_RANGE(t):
 
     return t
 
-t_CHAR = r'[^' + re.escape(literals) + r'\\\[\]]'
+t_CHAR = r'[^' + re.escape(literals) + r'\\' + r']'
 
 # char_or_escape = r'(' + t_CHAR + r'|' + escaped + r')'
+# class_regex = r'\[(' + char_or_escape + r'|' + char_or_escape + r'-' + char_or_escape + r')\]'
+# @TOKEN(class_regex)
+# def t_CLASS(t):
 
-# t_CLASS = r'\[(' + char_or_escape + r'|' + char_or_escape + r'-' + char_or_escape + r')\]'
 
 lexer = lex.lex()

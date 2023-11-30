@@ -1,7 +1,7 @@
 import pytest
 import re
 
-from parse_regex import lexer
+from parse_regex.lexer import lexer, RegexRange
 
 class TestRegexes:
     def _assert_expected(self, lexer, expected):
@@ -14,6 +14,19 @@ class TestRegexes:
         expected = [
             ('CHAR', 'o'),
             ('CHAR', 'l'),
+            ('CHAR', 'a'),
+        ]
+
+        self._assert_expected(lexer, expected)
+
+    def test_chars_curly_brackets(self):
+        lexer.input('}}{{a')
+
+        expected = [
+            ('CHAR', '}'),
+            ('CHAR', '}'),
+            ('CHAR', '{'),
+            ('CHAR', '{'),
             ('CHAR', 'a'),
         ]
 
@@ -66,19 +79,38 @@ class TestRegexes:
     def test_range_one(self):
         lexer.input(r'{3}')
 
-        token = lexer.token()
+        expected = [
+            ('RANGE', RegexRange(3, 3)),
+        ]
 
-        assert token.type == 'RANGE'
-        assert token.value.min == 3
-        assert token.value.max == 3
+        self._assert_expected(lexer, expected)
 
     def test_range_both(self):
-        lexer.input(r'{2,3}')
+        lexer.input(r'{2,322}')
 
-        token = lexer.token()
+        expected = [
+            ('RANGE', RegexRange(2, 322)),
+        ]
 
-        assert token.type == 'RANGE'
-        assert token.value.min == 2
-        assert token.value.max == 3
+        self._assert_expected(lexer, expected)
 
-    # Testear mezclando ranges con otras cositas
+    def test_range_integration(self):
+        lexer.input(r'ola}{2,3}{a{183,234}}{}}{')
+
+        expected = [
+            ('CHAR', 'o'),
+            ('CHAR', 'l'),
+            ('CHAR', 'a'),
+            ('CHAR', '}'),
+            ('RANGE', RegexRange(2, 3)),
+            ('CHAR', '{'),
+            ('CHAR', 'a'),
+            ('RANGE', RegexRange(183, 234)),
+            ('CHAR', '}'),
+            ('CHAR', '{'),
+            ('CHAR', '}'),
+            ('CHAR', '}'),
+            ('CHAR', '{'),
+        ]
+
+        self._assert_expected(lexer, expected)

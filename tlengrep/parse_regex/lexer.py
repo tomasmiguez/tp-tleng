@@ -37,15 +37,6 @@ tokens = (
 
 literals = "|*+?()[]"
 
-escaped = r'\\(.)'
-
-
-@TOKEN(escaped)
-def t_ESCAPED(t):
-    t.value = t.lexer.lexmatch.group(2)
-    return t
-
-
 def t_RANGE(t):
     r'\{(?:(?P<min>\d+),)?(?P<max>\d+)\}'
 
@@ -59,15 +50,20 @@ def t_RANGE(t):
 
 t_CHAR = r'[^' + re.escape(literals) + r'\\' + r']'
 
+escaped = r'\\(.)'
 char_or_escape = r'(?:' + t_CHAR + r'|' + escaped + r')'
-class_int = r'(?P<fst>' + char_or_escape + r')-(?P<snd>' + char_or_escape + r')'
-
-
+class_int = r'(?P<fst>' + char_or_escape + r')-(?P<lst>' + char_or_escape + r')'
 @TOKEN(class_int)
 def t_CLASS_INT(t):
-    t.value = RegexClassInterval(
-        t.lexer.lexmatch.group('fst'), t.lexer.lexmatch.group('snd')
-    )
+    fst = t.lexer.lexmatch.group('fst').lstrip('\\')
+    lst = t.lexer.lexmatch.group('lst').lstrip('\\')
+    t.value = RegexClassInterval(fst, lst)
+
+    return t
+
+@TOKEN(escaped)
+def t_ESCAPED(t):
+    t.value = t.lexer.lexmatch.group(10)
     return t
 
 

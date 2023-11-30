@@ -95,7 +95,7 @@ class TestRegexes:
         self._assert_expected(lexer, expected)
 
     def test_range_integration(self):
-        lexer.input(r'ola}{2,3}{a{183,234}}{}}{')
+        lexer.input(r'ola}{2,3}{a{183,234}}{3}{}}{')
 
         expected = [
             ('CHAR', 'o'),
@@ -107,6 +107,7 @@ class TestRegexes:
             ('CHAR', 'a'),
             ('RANGE', RegexRange(183, 234)),
             ('CHAR', '}'),
+            ('RANGE', RegexRange(3, 3)),
             ('CHAR', '{'),
             ('CHAR', '}'),
             ('CHAR', '}'),
@@ -122,6 +123,62 @@ class TestRegexes:
             ('[', '['),
             ('CLASS_INT', RegexClassInterval('a', 'z')),
             (']', ']'),
+        ]
+
+        self._assert_expected(lexer, expected)
+
+    def test_class_int_escaped(self):
+        lexer.input(r'a-\z')
+
+        expected = [
+            ('CLASS_INT', RegexClassInterval('a', 'z')),
+        ]
+
+        self._assert_expected(lexer, expected)
+
+    def test_class_int_dash(self):
+        lexer.input(r'---')
+
+        expected = [
+            ('CLASS_INT', RegexClassInterval('-', '-')),
+        ]
+
+        self._assert_expected(lexer, expected)
+
+    def test_class_int_escaped_dash(self):
+        lexer.input(r'a-\-')
+
+        expected = [
+            ('CLASS_INT', RegexClassInterval('a', '-')),
+        ]
+
+        self._assert_expected(lexer, expected)
+
+    def test_class_int_mixed_symbols(self):
+        lexer.input(r'\--@}-\P-')
+
+        expected = [
+            ('CLASS_INT', RegexClassInterval('-', '@')),
+            ('CLASS_INT', RegexClassInterval('}', 'P')),
+            ('CHAR', '-'),
+        ]
+
+        self._assert_expected(lexer, expected)
+
+    def test_class_int_integration(self):
+        lexer.input(r'[a-z}{2,3}{_a{234}}{-}')
+
+        expected = [
+            ('[', '['),
+            ('CLASS_INT', RegexClassInterval('a', 'z')),
+            ('CHAR', '}'),
+            ('RANGE', RegexRange(2, 3)),
+            ('CHAR', '{'),
+            ('CHAR', '_'),
+            ('CHAR', 'a'),
+            ('RANGE', RegexRange(234, 234)),
+            ('CHAR', '}'),
+            ('CLASS_INT', RegexClassInterval('{', '}')),
         ]
 
         self._assert_expected(lexer, expected)

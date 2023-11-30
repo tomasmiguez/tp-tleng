@@ -22,7 +22,8 @@ V -> [ CS ]
 V -> cls_d
 V -> cls_w
 V -> ( R )
-V -> CE
+V -> char
+V -> escaped
 V -> cls_int
 
 Sets de clases:
@@ -30,9 +31,6 @@ CS -> CA CS
 CS -> ''
 
 Atomos de clases:
-CA -> CE
+CA -> char
+CA -> escaped
 CA -> cls_int
-
-Clases especiales:
-CE -> ch
-CE -> esc

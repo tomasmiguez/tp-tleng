@@ -83,24 +83,31 @@ def p_op_range(p):
         unions = Union(unions, concats)
     p[0] = unions
 
+def p_val_set(p):
+    '''
+    val : '[' set ']'
+    '''
+    p[0] = RegClass(p[2])
 
-def p_val_union_set(p):
+def p_val_regex(p):
     '''
     val : '(' regex ')'
-        | '[' set ']'
-        | esp
     '''
-    if len(p) == 4:
-        p[0] = p[2]
-    else:
-        p[0] = p[1]
+    p[0] = p[2]
+
+def p_val_esp(p):
+    '''
+    val : CHAR
+        | ESCAPED
+    '''
+    p[0] = Char(p[1])
 
 
 def p_val_class_digit(p):
     '''
     val : CLS_D
     '''
-    _class_digit_symbols = RegexClassInterval('0', '9').all_symbols()
+    _class_digit_symbols = RegexClassInterval('0', '9').all_symbols
 
     p[0] = RegClass(_class_digit_symbols)
 
@@ -128,21 +135,22 @@ def p_set(p):
     '''
     set : atom set
     '''
-    p[0] = Union(p[1], p[2])
+    p[0] = p[1].union(p[2])
 
 
 def p_set_lambda(p):
     '''
     set :
     '''
-    p[0] = Empty()
+    p[0] = set()
 
 
 def p_atom_esp(p):
     '''
-    atom : esp
+    atom : CHAR
+         | ESCAPED
     '''
-    p[0] = p[1]
+    p[0] = { p[1] }
 
 
 def p_atom_int(p):
@@ -151,18 +159,8 @@ def p_atom_int(p):
     '''
     if ord(p[1].fst) > ord(p[1].lst):
         raise SyntaxError(f'Invalid range {p[1]}')
-    unions = Empty()
-    for sym in p[1].all_symbols:
-        unions = Union(unions, Char(sym))
-    p[0] = unions
 
-
-def p_esp(p):
-    '''
-    esp : CHAR
-        | ESCAPED
-    '''
-    p[0] = Char(p[1])
+    p[0] = p[1].all_symbols
 
 
 def p_error(p):

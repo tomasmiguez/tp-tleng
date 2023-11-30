@@ -1,6 +1,8 @@
 from lexer import tokens
+from errors import ParseError
 from ply.yacc import yacc
 from regex import Char, Concat, Empty, Lambda, Plus, Star, Union
+
 
 def p_union(p):
     '''
@@ -8,11 +10,13 @@ def p_union(p):
     '''
     p[0] = Union(p[1], p[3])
 
+
 def p_union_concat(p):
     '''
     union : concat
     '''
     p[0] = p[1]
+
 
 def p_concat(p):
     '''
@@ -20,11 +24,13 @@ def p_concat(p):
     '''
     p[0] = Concat(p[1], p[2])
 
+
 def p_concat_lambda(p):
     '''
     concat :
     '''
     p[0] = Lambda()
+
 
 def p_op(p):
     '''
@@ -43,6 +49,7 @@ def p_op(p):
     else:
         p[0] = p[1]
 
+
 def p_op_range(p):
     '''
     op : val RANGE
@@ -55,36 +62,72 @@ def p_op_range(p):
         unions = Union(unions, concats)
     p[0] = unions
 
-def p_val_paren(p):
+
+def p_val_union_set(p):
     '''
     val : '(' union ')'
+        | '[' set ']'
+        | esp
     '''
-    p[0] = p[2]
+    if len(p) == 4:
+        p[0] = p[2]
+    else:
+        p[0] = p[1]
 
-def p_val_char(p):
+
+def p_val_int(p):
     '''
-    val : CHAR
+    val : CLASS_INT
+    '''
+    p[0] = Concat(Concat(Char(p[1].fst), Char('-')), Char(p[1].lst))
+
+
+def p_set(p):
+    '''
+    set : atom set
+    '''
+    p[0] = Union(p[1], p[2])
+
+
+def p_set_lambda(p):
+    '''
+    set :
+    '''
+    p[0] = Empty()
+
+
+def p_atom_esp(p):
+    '''
+    atom : esp
+    '''
+    p[0] = p[1]
+
+
+def p_atom_int(p):
+    '''
+    atom : CLASS_INT
+    '''
+    if ord(p[1].fst) > ord(p[1].lst):
+        raise ParseError(f'Invalid range {p[1]}')
+    unions = Empty()
+    for sym in p[1].all_symbols:
+        unions = Union(unions, Char(sym))
+    p[0] = unions
+
+
+def p_esp(p):
+    '''
+    esp : CHAR
         | ESCAPED
     '''
     p[0] = Char(p[1])
 
-# def p_val_class(p):
-#     '''
-#     val : CLASS
-#     '''
-#     unions = Empty()
-#     for sym in p[1].all_symbols:
-#         unions = Union(unions, Char(sym))
-#     p[0] = unions
 
 def p_error(p):
     if p:
-        raise ParseError(
-            f'Unexpected token {p.value!r} at position {p.lexpos}')
+        raise ParseError(f'Unexpected token {p.value!r} at position {p.lexpos}')
     else:
         raise ParseError(f'Unexpected end of expression')
 
-class ParseError(Exception):
-    pass
 
 parser = yacc()

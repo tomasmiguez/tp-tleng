@@ -1,4 +1,9 @@
-__all__ = ["SyntaxError"]
+__all__ = ["SyntaxError", "ParseError"]
+
 
 class SyntaxError(Exception):
+    pass
+
+
+class ParseError(Exception):
     pass

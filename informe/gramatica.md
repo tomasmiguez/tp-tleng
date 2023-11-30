@@ -15,8 +15,7 @@ O -> V
 
 Valores (caracteres, clases especiales, clases o caracteres escapados):
 V -> [ CL ]
-V -> ch
-V -> esc
+V -> CE
 V -> ( U )
 
 Clases de caracteres:

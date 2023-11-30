@@ -52,22 +52,32 @@ def p_concat_lambda(p):
     p[0] = p[1]
 
 
-def p_op(p):
+def p_op_kleene(p):
     '''
     op : val '*'
-       | val '+'
-       | val '?'
-       | val
     '''
-    if len(p) == 3:
-        if p[2] == '*':
-            p[0] = Star(p[1])
-        elif p[2] == '+':
-            p[0] = Plus(p[1])
-        elif p[2] == '?':
-            p[0] = Union(p[1], Lambda())
-    else:
-        p[0] = p[1]
+    p[0] = Star(p[1])
+
+
+def p_op_positive(p):
+    '''
+    op : val '+'
+    '''
+    p[0] = Plus(p[1])
+
+
+def p_op_optional(p):
+    '''
+    op : val '?'
+    '''
+    p[0] = Union(p[1], Lambda())
+
+
+def p_op_id(p):
+    '''
+    op : val
+    '''
+    p[0] = p[1]
 
 
 def p_op_range(p):

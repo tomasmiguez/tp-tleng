@@ -1,4 +1,4 @@
-from lexer import tokens
+from lexer import RegexClassInterval, tokens
 from .errors import SyntaxError
 from ply.yacc import yacc
 from regex import Char, Concat, Empty, Lambda, Plus, Star, Union
@@ -74,6 +74,24 @@ def p_val_union_set(p):
     else:
         p[0] = p[1]
 
+def p_val_class_digit(p):
+    '''
+    val : CLS_D
+    '''
+    symbols = [str(i) for i in range(10)]
+    union = Empty()
+    for symbol in symbols:
+        union = Union(union, Char(symbol))
+    p[0]
+
+def p_val_class_word(p):
+    '''
+    val : CLS_W
+    '''
+    # symbols is a list of strings that match with [a-zA-Z0-9_]
+    # symbols = RegexClassInterval('a', 'z').all_symbols
+    # symbols = symbols + RegexClassInterval('A', 'Z').all_symbols
+    # WIP
 
 def p_val_int(p):
     '''

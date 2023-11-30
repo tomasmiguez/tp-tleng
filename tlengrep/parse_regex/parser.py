@@ -3,6 +3,12 @@ from .errors import SyntaxError
 from ply.yacc import yacc
 from regex import Char, Concat, Empty, Lambda, Plus, Star, Union
 
+def _enum_to_union(enum):
+    union = Empty()
+    for sym in enum:
+        union = Union(union, Char(sym))
+    return union
+
 
 def p_union(p):
     '''
@@ -78,20 +84,22 @@ def p_val_class_digit(p):
     '''
     val : CLS_D
     '''
-    symbols = [str(i) for i in range(10)]
-    union = Empty()
-    for symbol in symbols:
-        union = Union(union, Char(symbol))
-    p[0]
+    _class_digit = _enum_to_union(RegexClassInterval('0', '9').all_symbols())
+
+    p[0] = _class_digit
 
 def p_val_class_word(p):
     '''
     val : CLS_W
     '''
-    # symbols is a list of strings that match with [a-zA-Z0-9_]
-    # symbols = RegexClassInterval('a', 'z').all_symbols
-    # symbols = symbols + RegexClassInterval('A', 'Z').all_symbols
-    # WIP
+    _class_word_symbols = RegexClassInterval('a', 'z').all_symbols()
+    _class_word_symbols = _class_word_symbols.union(RegexClassInterval('A', 'Z').all_symbols())
+    _class_word_symbols = _class_word_symbols.union(RegexClassInterval('0', '9').all_symbols())
+    _class_word_symbols = _class_word_symbols.union({'_'})
+
+    _class_word = _enum_to_union(_class_word_symbols)
+
+    p[0] = _class_word
 
 def p_val_int(p):
     '''
@@ -128,7 +136,7 @@ def p_atom_int(p):
     if ord(p[1].fst) > ord(p[1].lst):
         raise SyntaxError(f'Invalid range {p[1]}')
     unions = Empty()
-    for sym in p[1].all_symbols:
+    for sym in p[1].all_symbols():
         unions = Union(unions, Char(sym))
     p[0] = unions
 

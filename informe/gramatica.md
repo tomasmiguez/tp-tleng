@@ -18,19 +18,19 @@ O -> V range
 O -> V
 
 Valores (caracteres, clases especiales, clases o caracteres escapados):
-V -> [ CS ]
+V -> [ S ]
+V -> ( R )
 V -> cls_d
 V -> cls_w
-V -> ( R )
 V -> char
 V -> escaped
 V -> cls_int
 
 Sets de clases:
-CS -> CA CS
-CS -> ''
+S -> A S
+S -> ''
 
 Atomos de clases:
-CA -> char
-CA -> escaped
-CA -> cls_int
+A -> char
+A -> escaped
+A -> cls_int

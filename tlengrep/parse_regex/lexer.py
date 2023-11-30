@@ -19,7 +19,8 @@ class RegexClassInterval:
         self.fst = fst
         self.lst = lst
 
-    def all_symbols(self) -> set[str]:
+    @property
+    def all_symbols(self) -> set:
         return set([chr(i) for i in range(ord(self.fst), ord(self.lst) + 1)])
 
     def __eq__(self, other: object) -> bool:

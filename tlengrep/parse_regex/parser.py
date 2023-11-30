@@ -1,7 +1,7 @@
 from lexer import RegexClassInterval, tokens
 from .errors import SyntaxError
 from ply.yacc import yacc
-from regex import Char, Concat, Empty, Lambda, Plus, Star, Union
+from regex import Char, Concat, Empty, Lambda, Plus, RegClass, Star, Union
 
 
 def _enum_to_union(enum):
@@ -100,9 +100,9 @@ def p_val_class_digit(p):
     '''
     val : CLS_D
     '''
-    _class_digit = _enum_to_union(RegexClassInterval('0', '9').all_symbols)
+    _class_digit_symbols = RegexClassInterval('0', '9').all_symbols()
 
-    p[0] = _class_digit
+    p[0] = RegClass(_class_digit_symbols)
 
 
 def p_val_class_word(p):
@@ -110,17 +110,11 @@ def p_val_class_word(p):
     val : CLS_W
     '''
     _class_word_symbols = RegexClassInterval('a', 'z').all_symbols
-    _class_word_symbols = _class_word_symbols.union(
-        RegexClassInterval('A', 'Z').all_symbols
-    )
-    _class_word_symbols = _class_word_symbols.union(
-        RegexClassInterval('0', '9').all_symbols
-    )
+    _class_word_symbols = _class_word_symbols.union(RegexClassInterval('A', 'Z').all_symbols)
+    _class_word_symbols = _class_word_symbols.union(RegexClassInterval('0', '9').all_symbols)
     _class_word_symbols = _class_word_symbols.union({'_'})
 
-    _class_word = _enum_to_union(_class_word_symbols)
-
-    p[0] = _class_word
+    p[0] = RegClass(_class_word_symbols)
 
 
 def p_val_int(p):

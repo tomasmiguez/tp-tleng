@@ -189,3 +189,26 @@ class Plus(RegEx):
 
     def __str__(self):
         return f"({self.exp})+" if not self.exp._atomic() else f"{self.exp}+"
+
+class RegClass(RegEx):
+    """Expresión regular que denota una clase de caracteres."""
+
+    def __init__(self, chars: set[str]):
+        self.chars = chars
+
+    def naive_match(self, word: str):
+        return word in self.chars
+
+    def to_afnd(self) -> AFND:
+        afnd = AFND().add_state('q0').mark_initial_state('q0').add_state('q1', final=True)
+
+        for char in self.chars:
+            afnd.add_transition('q0', 'q1', char)
+
+        return afnd
+
+    def _atomic(self):
+        return True
+
+    def __str__(self):
+        return f"[{self.chars}]"

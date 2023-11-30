@@ -61,6 +61,60 @@ class AFD(AF):
                 self.add_transition(v['=eq'], v[char], char)
         return self.normalize_states()
 
+    def minimize_hopcroft(self):
+        """Minimiza el autómata usando el algoritmo de Hopcroft."""
+
+        # Particion inicial
+        P = [self.final_states, self.states - self.final_states]
+        W = [self.final_states, self.states - self.final_states]
+
+        # Particion final
+        while W:
+            A = W.pop()
+            for char in self.alphabet:
+                X = set()
+                for state in self.states:
+                    if self.transitions[state][char] in A:
+                        X.add(state)
+                for Y in P:
+                    intersect = X.intersection(Y)
+                    difference = Y.difference(X)
+
+                    if not intersect or not difference:
+                        continue
+
+                    P.remove(Y)
+                    P.append(intersect)
+                    P.append(difference)
+
+                    if Y in W:
+                        W.remove(Y)
+                        W.append(intersect)
+                        W.append(difference)
+                    else:
+                        if len(intersect) <= len(difference):
+                            W.append(intersect)
+                        else:
+                            W.append(difference)
+
+        result = AFD()
+        state_to_partition = {}
+        for partition in P:
+            is_final = len(partition.intersection(self.final_states)) != 0
+            result.add_state(frozenset(partition), is_final)
+            for state in partition:
+                state_to_partition[state] = frozenset(partition)
+                if state == self.initial_state:
+                    result.mark_initial_state(frozenset(partition))
+
+        for state in self.states:
+            for char in self.alphabet:
+                result.add_transition(state_to_partition[state],
+                                      state_to_partition[self.transitions[state][char]],
+                                      char)
+
+        return result
+
     def accepts(self, word: str) -> bool:
         """Determina si una cadena es aceptada por el automata. (En tiempo lineal, duuuh.)"""
         current_state = self.initial_state

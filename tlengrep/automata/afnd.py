@@ -167,8 +167,8 @@ class AFND(AF):
         """Dado otro AFND, devuelve un automate que contiene la union de ambos alfabetos,
         estados, y transiciones; evitando colisiones de nombres. No tiene estado inicial
         ni finales."""
-        self.normalize_states(prefix="q")
-        other.normalize_states(prefix="p")
+        self.add_prefix("q")
+        other.add_prefix("p")
 
         result = AFND()
         result.states = self.states.union(other.states)

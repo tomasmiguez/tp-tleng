@@ -1,5 +1,4 @@
 import re
-from typing import Self
 import ply.lex as lex
 from ply.lex import TOKEN
 
@@ -8,7 +7,7 @@ class RegexRange:
         self.min = min
         self.max = max
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, RegexRange):
             return False
 
@@ -19,7 +18,7 @@ class RegexClassInterval:
         self.fst = fst
         self.lst = lst
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, RegexClassInterval):
             return False
 

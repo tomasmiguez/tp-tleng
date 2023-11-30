@@ -55,6 +55,24 @@ class TestRegexes:
 
         self._assert_expected(lexer, expected)
 
+    def test_cls_d(self):
+        lexer.input(r'\d')
+
+        expected = [
+            ('CLS_D', r'\d'),
+        ]
+
+        self._assert_expected(lexer, expected)
+
+    def test_cls_w(self):
+        lexer.input(r'\w')
+
+        expected = [
+            ('CLS_W', r'\w'),
+        ]
+
+        self._assert_expected(lexer, expected)
+
     def test_escaped(self):
         lexer.input(r'\o\|\laa}q\w\d\+\(\)')
 
@@ -66,8 +84,8 @@ class TestRegexes:
             ('CHAR', 'a'),
             ('CHAR', '}'),
             ('CHAR', 'q'),
-            ('ESCAPED', 'w'),
-            ('ESCAPED', 'd'),
+            ('CLS_W', r'\w'),
+            ('CLS_D', r'\d'),
             ('ESCAPED', '+'),
             ('ESCAPED', '('),
             ('ESCAPED', ')'),

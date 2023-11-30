@@ -33,6 +33,8 @@ tokens = (
     'ESCAPED',
     'RANGE',
     'CLASS_INT',
+    'CLS_D',
+    'CLS_W',
 )
 
 literals = "|*+?()[]"
@@ -49,7 +51,7 @@ def t_RANGE(t):
 
 t_CHAR = r'[^' + re.escape(literals) + r'\\' + r']'
 
-escaped = r'\\(.)'
+escaped = r'\\([^dw])'
 char_or_escape = r'(?:' + t_CHAR + r'|' + escaped + r')'
 class_int = r'(?P<fst>' + char_or_escape + r')-(?P<lst>' + char_or_escape + r')'
 @TOKEN(class_int)
@@ -64,5 +66,8 @@ def t_CLASS_INT(t):
 def t_ESCAPED(t):
     t.value = t.lexer.lexmatch.group(10)
     return t
+
+t_CLS_D = r'\\d'
+t_CLS_W = r'\\w'
 
 lexer = lex.lex()

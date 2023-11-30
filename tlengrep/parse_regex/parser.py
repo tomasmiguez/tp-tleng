@@ -1,6 +1,6 @@
 from lexer import tokens
 from ply.yacc import yacc
-from tlengrep.regex import Char, Concat, Empty, Lambda, Plus, Star, Union
+from regex import Char, Concat, Empty, Lambda, Plus, Star, Union
 
 def p_union(p):
     '''

@@ -1,4 +1,3 @@
-import re
 from lexer import tokens
 from tlengrep.regex import Char, Concat, Empty, Lambda, Plus, Star, Union
 
@@ -45,8 +44,7 @@ def p_op(p):
 
 def p_op_range(p):
     '''
-    p_op_range : val RANGE1
-               | val RANGE2
+    p_op_range : val RANGE
     '''
     unions = Empty()
     for n in range(p[2].min, p[2].max):
@@ -65,7 +63,7 @@ def p_val_paren(p):
 def p_val_char(p):
     '''
     val : CHAR
-        | ESCAPE
+        | ESCAPED
     '''
     p[0] = Char(p[1])
 
@@ -74,6 +72,6 @@ def p_val_class(p):
     val : CLASS
     '''
     unions = Empty()
-    for sym in p[1].all_symbols():
+    for sym in p[1].all_symbols:
         unions = Union(unions, Char(sym))
     p[0] = unions

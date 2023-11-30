@@ -3,13 +3,12 @@ from .errors import SyntaxError
 from ply.yacc import yacc
 from regex import Char, Concat, Empty, Lambda, Plus, RegClass, Star, Union
 
+_class_digit_symbols = RegexClassInterval('0', '9').all_symbols
 
-def _enum_to_union(enum):
-    union = Empty()
-    for sym in enum:
-        union = Union(union, Char(sym))
-    return union
-
+_class_word_symbols = RegexClassInterval('a', 'z').all_symbols
+_class_word_symbols = _class_word_symbols.union(RegexClassInterval('A', 'Z').all_symbols)
+_class_word_symbols = _class_word_symbols.union(RegexClassInterval('0', '9').all_symbols)
+_class_word_symbols = _class_word_symbols.union({'_'})
 
 def p_regex_union(p):
     '''
@@ -107,8 +106,6 @@ def p_val_class_digit(p):
     '''
     val : CLS_D
     '''
-    _class_digit_symbols = RegexClassInterval('0', '9').all_symbols
-
     p[0] = RegClass(_class_digit_symbols)
 
 
@@ -116,11 +113,6 @@ def p_val_class_word(p):
     '''
     val : CLS_W
     '''
-    _class_word_symbols = RegexClassInterval('a', 'z').all_symbols
-    _class_word_symbols = _class_word_symbols.union(RegexClassInterval('A', 'Z').all_symbols)
-    _class_word_symbols = _class_word_symbols.union(RegexClassInterval('0', '9').all_symbols)
-    _class_word_symbols = _class_word_symbols.union({'_'})
-
     p[0] = RegClass(_class_word_symbols)
 
 
